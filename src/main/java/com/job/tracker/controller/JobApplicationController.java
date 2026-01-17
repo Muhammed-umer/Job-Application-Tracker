@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import org.springframework.security.crypto.password.PasswordEncoder;
+
 import com.job.tracker.entity.JobApplication;
 import com.job.tracker.entity.Users;
 import com.job.tracker.repo.UserRepo;
@@ -28,7 +30,11 @@ public class JobApplicationController {
     private UserService userService;
 
     @Autowired
-    private JobApplicationService jobApplicationService; // ✅ MISSING FIELD
+    private JobApplicationService jobApplicationService;
+
+    // INJECT PASSWORD ENCODER
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @GetMapping("/login")
     public String showLoginForm(Model model) {
@@ -48,15 +54,15 @@ public class JobApplicationController {
     }
 
     @PostMapping("/login")
-    public String processLogin(@RequestParam String username, 
+    public String processLogin(@RequestParam String username,
                                @RequestParam String password,
                                Model model,
                                HttpSession session) {
         Optional<Users> dbUser = userRepo.findByUsername(username);
 
-        if (dbUser.isPresent() && dbUser.get().getPassword().equals(password)) {
-        	session.setAttribute("username", username); 
-            return "redirect:/home?user=" + username;
+        if (dbUser.isPresent() && passwordEncoder.matches(password, dbUser.get().getPassword())) {
+            session.setAttribute("username", username);
+            return "redirect:/home"; // Removed query param '?user=' for security
         }
 
         model.addAttribute("error", "Invalid credentials!");
@@ -66,7 +72,7 @@ public class JobApplicationController {
     @PostMapping("/signup")
     public String processSignup(@RequestParam String email,
                                 @RequestParam String username,
-                                @RequestParam String password,	                        
+                                @RequestParam String password,
                                 Model model) {
 
         if (userService.isEmailExists(email)) {
@@ -75,7 +81,7 @@ public class JobApplicationController {
         }
 
         if (userService.isUsernameExists(username)) {
-            model.addAttribute("error", "Username already taken! please try again with new username");
+            model.addAttribute("error", "Username already taken! Please try again with a new username.");
             return "signup";
         }
 
@@ -83,6 +89,8 @@ public class JobApplicationController {
         newUser.setEmail(email);
         newUser.setUsername(username);
         newUser.setPassword(password);
+
+        // Note: hashing happens inside userService.saveUser() as per previous instructions
         userService.saveUser(newUser);
 
         model.addAttribute("message", "Signup successful! Please log in.");
@@ -91,16 +99,17 @@ public class JobApplicationController {
 
     @GetMapping("/home")
     public String homePage(HttpSession session, Model model) {
-       String username = (String) session.getAttribute("username");
-        
+        String username = (String) session.getAttribute("username");
+
         if (username == null) {
             return "redirect:/login";
         }
 
         model.addAttribute("username", username);
         model.addAttribute("applications", jobApplicationService.getAllByUsername(username));
-        return "home"; 
+        return "home";
     }
+
     @PostMapping("/save")
     public String saveApplication(@ModelAttribute JobApplication app,
                                   HttpSession session) {
@@ -113,6 +122,7 @@ public class JobApplicationController {
         jobApplicationService.saveApplication(app);
         return "redirect:/home";
     }
+
     @GetMapping("/add")
     public String showAddForm(HttpSession session, Model model) {
         String username = (String) session.getAttribute("username");
@@ -120,16 +130,16 @@ public class JobApplicationController {
             return "redirect:/login";
         }
         model.addAttribute("jobApplication", new JobApplication());
-        return "add"; // will render add.jsp
+        return "add";
     }
-    
+
     @GetMapping("/edit")
     public String showEditForm(@RequestParam Long id, Model model) {
         JobApplication app = jobApplicationService.getById(id);
         model.addAttribute("application", app);
-        return "edit"; // edit.jsp page
+        return "edit";
     }
-    
+
     @GetMapping("/delete")
     public String deleteApplication(@RequestParam Long id, HttpSession session) {
         String username = (String) session.getAttribute("username");
@@ -138,7 +148,7 @@ public class JobApplicationController {
         jobApplicationService.deleteById(id);
         return "redirect:/home";
     }
-    
+
     @PostMapping("/update")
     public String updateApplication(@ModelAttribute JobApplication app,
                                     HttpSession session) {
