@@ -4,6 +4,7 @@
 <html>
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0", viewport-fit=cover">
     <title>Edit Job Application</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" />
     <style>
@@ -80,6 +81,27 @@
         .back-link:hover {
             text-decoration: underline;
         }
+
+        @media (max-width: 600px) {
+            .container {
+                width: 95%;
+                padding: 20px 15px;
+                margin: 20px auto;
+            }
+
+            h2 {
+                font-size: 20px;
+            }
+
+            input[type="text"], textarea, select {
+                font-size: 16px;
+            }
+
+            .submit-btn {
+                width: 100%;
+                padding: 12px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -118,6 +140,6 @@
 
         <a href="home?user=${application.user.username}" class="back-link"><i class="fa-solid fa-arrow-left"></i> Back to Home</a>
     </div>
-
+    <jsp:include page="footer.jsp" />
 </body>
 </html>

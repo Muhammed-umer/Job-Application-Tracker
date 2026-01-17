@@ -5,6 +5,7 @@
 <html>
 <head>
 	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0", viewport-fit=cover">
 	<title>Signup</title>
 	<style>
 		* {
@@ -30,14 +31,25 @@
 			height: 85vh;
 		}
 		.box {
-			background-color: #ffffff;
-			border-radius: 12px;
-			box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
-			width: 360px;
-			padding: 25px;
-			border: 2px solid #ff99cc;
-			text-align: center;
-		}
+            background-color: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+            width: 100%;
+            max-width: 360px;
+            padding: 25px;
+            border: 2px solid #ff99cc;
+            text-align: center;
+            margin: 20px;
+        }
+
+        @media (max-width: 480px) {
+            .heading {
+                font-size: 24px; /* Reduce heading size */
+            }
+            .box {
+                padding: 20px; /* Reduce padding for more space */
+            }
+        }
 		.h1 {
 			text-align: center;
 			color: #ff33cc;
@@ -128,5 +140,6 @@
 			<button><a href="/login">Already have an account ? Login</a></button>
 		</div>
 	</div>
+	<jsp:include page="footer.jsp" />
 </body>
 </html>

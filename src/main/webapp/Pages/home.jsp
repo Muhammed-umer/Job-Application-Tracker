@@ -4,6 +4,7 @@
 <html>
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0", viewport-fit=cover">
     <title>Home</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <style>
@@ -100,8 +101,54 @@
             font-weight: bold;
         }
 
+
+        td.action-links {
+            white-space: nowrap; /* Forces icons to stay on one line */
+            min-width: 100px;    /* Ensures column has enough breathing room */
+        }
+
+        @media (max-width: 768px) {
+            .action-links a {
+                font-size: 18px; /* Make icons larger for fingers */
+                padding: 5px;    /* Increase tap area */
+                display: inline-block;
+            }
+        }
+
         .action-links a:hover {
             text-decoration: underline;
+        }
+
+        .table-responsive {
+            width: 100%;
+            overflow-x: auto; /* Enables horizontal scrolling */
+            -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+            margin-bottom: 20px;
+        }
+
+
+        @media (max-width: 768px) {
+            .top-bar {
+                flex-direction: column;
+                gap: 15px;
+                padding: 15px;
+            }
+
+            .container {
+                width: 95%;
+                padding: 15px;
+            }
+
+            .welcome-text {
+                font-size: 18px;
+                margin-bottom: 10px;
+            }
+
+
+            th, td {
+                padding: 10px 5px; /* Reduce padding */
+                font-size: 14px; /* Reduce font size */
+            }
         }
     </style>
 </head>
@@ -118,32 +165,34 @@
         <div class="top-actions">
             <a href="add?user=${username}" class="add-btn"><i class="fa-solid fa-plus"></i> Add new job application</a>
         </div>
-
-        <table>
-            <tr>
-                <th>Organization</th>
-                <th>Position</th>
-                <th>Location</th>
-                <th>Status</th>
-                <th>Notes</th>
-                <th>Action</th>
-            </tr>
-            <c:forEach var="app" items="${applications}">
+        <div class="table-responsive">
+            <table>
                 <tr>
+                    <th>Organization</th>
+                    <th>Position</th>
+                    <th>Location</th>
+                    <th>Status</th>
+                    <th>Notes</th>
+                    <th>Action</th>
+                </tr>
+                <c:forEach var="app" items="${applications}">
+                 <tr>
                     <td>${app.organization}</td>
                     <td>${app.position}</td>
                     <td>${app.location}</td>
                     <td>${app.status}</td>
                     <td>${app.notes}</td>
                     <td class="action-links">
-    						<a href="edit?id=${app.id}" title="Edit"><i class="fa-solid fa-pen-to-square"></i></a>
-    						&nbsp;|&nbsp;
-    						<a href="delete?id=${app.id}" title="Delete" onclick="return confirm('Are you sure you want to delete this application?');"><i class="fa-solid fa-trash"></i></a>
-					</td>
-				</tr>
-            </c:forEach>
-        </table>
-    </div>
+                        <a href="edit?id=${app.id}" ...><i class="fa-solid fa-pen-to-square"></i></a>
+                        &nbsp;|&nbsp;
+                        <a href="delete?id=${app.id}" ...><i class="fa-solid fa-trash"></i></a>
+                    </td>
+            	 </tr>
+                </c:forEach>
+            </table>
+        </div>
 
+    </div>
+    <jsp:include page="footer.jsp" />
 </body>
 </html>
