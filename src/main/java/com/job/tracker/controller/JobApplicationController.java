@@ -135,6 +135,7 @@ public class JobApplicationController {
 
     @GetMapping("/edit")
     public String showEditForm(@RequestParam Long id, Model model) {
+        
         JobApplication app = jobApplicationService.getById(id);
         model.addAttribute("application", app);
         return "edit";
@@ -145,9 +146,16 @@ public class JobApplicationController {
         String username = (String) session.getAttribute("username");
         if (username == null) return "redirect:/login";
 
-        jobApplicationService.deleteById(id);
+        JobApplication app = jobApplicationService.getById(id);
+    
+        // VALIDATION: Check if app exists AND belongs to the current user
+        if (app != null && app.getUser().getUsername().equals(username)) {
+            jobApplicationService.deleteById(id);
+        } else {
+        // Handle unauthorized attempt (e.g., return error page)
+        }
         return "redirect:/home";
-    }
+    }  
 
     @PostMapping("/update")
     public String updateApplication(@ModelAttribute JobApplication app,
