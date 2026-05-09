@@ -11,6 +11,6 @@ FROM eclipse-temurin:17-jdk-alpine
 WORKDIR /app
 # COPY --from=build /app/target/*.jar app.jar
 # Change *.jar to *.war
-COPY --from=build /app/target/*.war app.jar
+COPY --from=build /app/target/*.war app.war
 EXPOSE 2006
-ENTRYPOINT ["java", "-jar", "app.jar"]
+ENTRYPOINT ["java", "-jar", "app.war"]
