@@ -6,7 +6,7 @@ COPY . .
 RUN mvn clean package -DskipTests
 
 # Stage 2: Run the App
-FROM eclipse-temurin:17-jdk-alpine
+FROM eclipse-temurin:17-jdk-jammy
 # FIX: Use the same directory structure
 WORKDIR /app
 # COPY --from=build /app/target/*.jar app.jar
